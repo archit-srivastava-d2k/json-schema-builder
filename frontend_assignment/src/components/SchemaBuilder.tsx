@@ -1,13 +1,13 @@
 
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Space, Input, Select, Button } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { SchemaFormValues } from '../types';
 
 export const SchemaBuilder = () => {
   const { control } = useFormContext<SchemaFormValues>();
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'schema',
   });
@@ -36,6 +36,12 @@ export const SchemaBuilder = () => {
                   <Select.Option value="Nested">Nested</Select.Option>
                 </Select>
               )}
+            />
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => remove(index)}
             />
           </Space>
         </div>
