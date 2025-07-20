@@ -1,3 +1,4 @@
+
 import { useFormContext, Controller, useWatch } from 'react-hook-form';
 import { Input, Select, Button, Space, Switch } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -38,6 +39,9 @@ export const FieldRow = ({ name, index, remove }: FieldRowProps) => {
               <Select {...field} style={{ width: 120 }} placeholder="Field Type">
                 <Select.Option value="String">String</Select.Option>
                 <Select.Option value="Number">Number</Select.Option>
+                <Select.Option value="Float">Float</Select.Option>
+                <Select.Option value="Boolean">Boolean</Select.Option>
+                <Select.Option value="ObjectId">ObjectId</Select.Option>
                 <Select.Option value="Nested">Nested</Select.Option>
               </Select>
             )}

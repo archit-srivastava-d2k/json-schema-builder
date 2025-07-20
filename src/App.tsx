@@ -1,11 +1,8 @@
-
 import { useForm, FormProvider } from 'react-hook-form';
-import { Layout, Typography, Row, Col, Card } from 'antd';
+import { Layout, Row, Col, Card } from 'antd';
 import { SchemaBuilder } from './components/SchemaBuilder';
 import { FormField, SchemaFormValues } from './types';
-
-const { Header, Content } = Layout;
-const { Title } = Typography;
+import { Content } from 'antd/es/layout/layout';
 
 const generateJson = (fields: FormField[]): Record<string, any> => {
   const result: Record<string, any> = {};
@@ -22,6 +19,12 @@ const generateJson = (fields: FormField[]): Record<string, any> => {
         singleItemValue = "";
       } else if (field.type === 'Number') {
         singleItemValue = 0;
+      } else if (field.type === 'Float') {
+        singleItemValue = 0.0;
+      } else if (field.type === 'Boolean') {
+        singleItemValue = false;
+      } else if (field.type === 'ObjectId') {
+        singleItemValue = null;
       }
       
       if (field.isArray) {
@@ -37,7 +40,7 @@ const generateJson = (fields: FormField[]): Record<string, any> => {
 function App() {
   const methods = useForm<SchemaFormValues>({
     defaultValues: {
-      schema: [{ key: 'firstName', type: 'String', isArray: false, children: [] }],
+      schema: [],
     },
     mode: 'onChange',
   });
@@ -47,10 +50,7 @@ function App() {
 
   return (
     <FormProvider {...methods}>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Header>
-          <Title level={3} style={{ color: 'white', lineHeight: '64px' }}>JSON Schema Builder</Title>
-        </Header>
+      <Layout style={{ minHeight: '100vh' , width: '100vw'}}>
         <Content style={{ padding: '24px' }}>
           <Row gutter={24}>
             <Col span={14}>
@@ -73,3 +73,9 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+

@@ -34,7 +34,7 @@ export const SchemaBuilder = ({ name }: SchemaBuilderProps) => {
         />
       ))}
       <Button
-        type="dashed"
+        type="primary"
         onClick={addField}
         icon={<PlusOutlined />}
         style={{ marginTop: '10px', marginLeft: '20px' }}
