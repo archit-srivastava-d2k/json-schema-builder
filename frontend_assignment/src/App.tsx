@@ -1,3 +1,4 @@
+
 import { useForm, FormProvider } from 'react-hook-form';
 import { Layout, Typography, Row, Col, Card } from 'antd';
 import { SchemaBuilder } from './components/SchemaBuilder';
@@ -14,26 +15,31 @@ const generateJson = (fields: FormField[]): Record<string, any> => {
 
   for (const field of fields) {
     if (field.key) {
-      if (field.type === 'String') {
-        result[field.key] = "";
+      let singleItemValue: any;
+      if (field.type === 'Nested') {
+        singleItemValue = generateJson(field.children || []);
+      } else if (field.type === 'String') {
+        singleItemValue = "";
       } else if (field.type === 'Number') {
-        result[field.key] = 0;
+        singleItemValue = 0;
+      }
+      
+      if (field.isArray) {
+        result[field.key] = singleItemValue !== undefined ? [singleItemValue] : [];
+      } else {
+        result[field.key] = singleItemValue;
       }
     }
   }
   return result;
 };
 
-
 function App() {
   const methods = useForm<SchemaFormValues>({
     defaultValues: {
-      schema: [
-        { key: 'firstName', type: 'String' },
-        { key: 'lastName', type: 'String' },
-        { key: 'age', type: 'Number' },
-      ],
+      schema: [{ key: 'firstName', type: 'String', isArray: false, children: [] }],
     },
+    mode: 'onChange',
   });
 
   const watchedSchema = methods.watch('schema');
@@ -49,7 +55,7 @@ function App() {
           <Row gutter={24}>
             <Col span={14}>
               <Card title="Schema Builder">
-                <SchemaBuilder />
+                <SchemaBuilder name="schema" />
               </Card>
             </Col>
             <Col span={10}>

@@ -1,57 +1,44 @@
 
-import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { Space, Input, Select, Button } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { SchemaFormValues } from '../types';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import type { FieldArrayPath } from 'react-hook-form';
+import { FieldRow } from './FieldRow';
+import type { SchemaFormValues, FormField } from '../types';
 
-export const SchemaBuilder = () => {
+interface SchemaBuilderProps {
+  name: FieldArrayPath<SchemaFormValues>;
+}
+
+export const SchemaBuilder = ({ name }: SchemaBuilderProps) => {
   const { control } = useFormContext<SchemaFormValues>();
+  const { fields, append, remove } = useFieldArray({ control, name });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'schema',
-  });
+  const watchedFields: FormField[] = useWatch({ control, name });
+  const isAddButtonDisabled =
+    watchedFields && watchedFields.length > 0 &&
+    !watchedFields[watchedFields.length - 1]?.key;
 
-  const addNewField = () => {
-    append({ key: '', type: 'String' });
+  const addField = () => {
+    append({ key: '', type: 'String', isArray: false, children: [] });
   };
 
   return (
-    <div>
+    <div style={name !== 'schema' ? { paddingTop: '10px' } : {}}>
       {fields.map((field, index) => (
-        <div key={field.id} style={{ marginBottom: '10px' }}>
-          <Space>
-            <Controller
-              name={`schema.${index}.key`}
-              control={control}
-              render={({ field }) => <Input {...field} placeholder="Field Name" />}
-            />
-            <Controller
-              name={`schema.${index}.type`}
-              control={control}
-              render={({ field }) => (
-                <Select {...field} style={{ width: 120 }}>
-                  <Select.Option value="String">String</Select.Option>
-                  <Select.Option value="Number">Number</Select.Option>
-                  <Select.Option value="Nested">Nested</Select.Option>
-                </Select>
-              )}
-            />
-            <Button
-              type="primary"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => remove(index)}
-            />
-          </Space>
-        </div>
+        <FieldRow 
+          key={field.id} 
+          name={name} 
+          index={index} 
+          remove={remove} 
+        />
       ))}
-
       <Button
         type="dashed"
-        onClick={addNewField}
+        onClick={addField}
         icon={<PlusOutlined />}
-        style={{ marginTop: '10px' }}
+        style={{ marginTop: '10px', marginLeft: '20px' }}
+        disabled={isAddButtonDisabled}
       >
         Add Item
       </Button>
