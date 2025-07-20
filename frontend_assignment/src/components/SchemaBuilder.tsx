@@ -1,14 +1,20 @@
+
 import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
-import { Space, Input, Select } from 'antd';
+import { Space, Input, Select, Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { SchemaFormValues } from '../types';
 
 export const SchemaBuilder = () => {
   const { control } = useFormContext<SchemaFormValues>();
 
-  const { fields } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
     name: 'schema',
   });
+
+  const addNewField = () => {
+    append({ key: '', type: 'String' });
+  };
 
   return (
     <div>
@@ -20,7 +26,6 @@ export const SchemaBuilder = () => {
               control={control}
               render={({ field }) => <Input {...field} placeholder="Field Name" />}
             />
-
             <Controller
               name={`schema.${index}.type`}
               control={control}
@@ -35,6 +40,15 @@ export const SchemaBuilder = () => {
           </Space>
         </div>
       ))}
+
+      <Button
+        type="dashed"
+        onClick={addNewField}
+        icon={<PlusOutlined />}
+        style={{ marginTop: '10px' }}
+      >
+        Add Item
+      </Button>
     </div>
   );
 };
