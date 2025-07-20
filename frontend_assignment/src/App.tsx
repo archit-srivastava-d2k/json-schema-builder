@@ -1,12 +1,29 @@
-// src/App.tsx
-
-import { useForm, FormProvider } from 'react-hook-form'; 
+import { useForm, FormProvider } from 'react-hook-form';
 import { Layout, Typography, Row, Col, Card } from 'antd';
 import { SchemaBuilder } from './components/SchemaBuilder';
-import { SchemaFormValues } from './types'; 
+import { FormField, SchemaFormValues } from './types';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
+
+const generateJson = (fields: FormField[]): Record<string, any> => {
+  const result: Record<string, any> = {};
+  if (!fields) {
+    return result;
+  }
+
+  for (const field of fields) {
+    if (field.key) {
+      if (field.type === 'String') {
+        result[field.key] = "";
+      } else if (field.type === 'Number') {
+        result[field.key] = 0;
+      }
+    }
+  }
+  return result;
+};
+
 
 function App() {
   const methods = useForm<SchemaFormValues>({
@@ -18,6 +35,9 @@ function App() {
       ],
     },
   });
+
+  const watchedSchema = methods.watch('schema');
+  const jsonOutput = JSON.stringify(generateJson(watchedSchema), null, 2);
 
   return (
     <FormProvider {...methods}>
@@ -35,7 +55,7 @@ function App() {
             <Col span={10}>
               <Card title="JSON Preview">
                 <pre style={{ margin: 0, background: '#f5f5f5', padding: '16px', borderRadius: '4px', minHeight: '400px' }}>
-                  <code></code>
+                  <code>{jsonOutput}</code>
                 </pre>
               </Card>
             </Col>
